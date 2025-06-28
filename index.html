@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <title>Experiment Results</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- 引入MathJax -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="container py-4">
   <h1 class="mb-4">Experiment Results</h1>
@@ -11,26 +14,30 @@
   <p>Our method achieves superior performance across multiple tasks, as shown below:</p>
   <img src="images/result1.png" class="img-fluid rounded mb-4" alt="Experiment chart" />
 
-  <h2>Performance Comparison</h2>
-  <table class="table table-bordered">
-    <thead>
-      <tr><th>Method</th><th>Environment A</th><th>Environment B</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Ours</td><td>89.3</td><td>76.5</td></tr>
-      <tr><td>Baseline</td><td>72.1</td><td>65.4</td></tr>
-    </tbody>
-  </table>
-
   <h2 class="mt-5">Supplementary Figures (Preview)</h2>
 
   <h4 class="mt-4">Ablations: Hyperparameter Amplification</h4>
   <iframe src="images/ablations_hyperparameter_amplification.pdf" width="100%" height="600px" style="border:1px solid #ccc;"></iframe>
-
   
+  <p>
+    To evaluate the effect of the gradient amplification parameter \(\alpha_{\text{amplification}}\), responsible for enhancing the gradient signals of the reliable TD3 algorithm under conditions where the variance of Q-values is generally small throughout the task, this subsection employs the Maze2D-large-v1 environment as a representative scenario.
+  </p>
+  
+  <p>
+    Specifically, we set the amplification parameter \(\alpha_{\text{amplification}}\) to values of 2.5, 5, 10, and 20. The evaluation results are illustrated in the supplementary figure above. When \(\alpha_{\text{amplification}}\) is set to 5, 10, or 20, the convergence performance is similar, albeit with higher variance during the initial training phase. With an amplification parameter of 2.5, significant improvements are still observable; however, the guidance from Q-value gradients is not fully leveraged. In the Vitamin method, online interactions before reaching \(0.8 \times 10^{6}\) samples did not yield clear performance improvements, and subsequent convergence exhibited large variances. This observation reaffirms our core claim: considering RL gradient uncertainty is essential when utilizing RL gradients for online fine-tuning of the Online Decision Transformer.
+  </p>
+
+  <p>
+    Overall, appropriately adjusting the amplification parameter allows the approach to approximate the performance of classical RL algorithms closely. Observations confirm that incorporating uncertainty-aware weighting of TD3 gradient signals and sample-level adaptive Sharpe ratios significantly enhances both performance and stability. Performance gains notably saturate beyond a certain threshold of amplification.
+  </p>
+
   <h4 class="mt-5">Analysis: Delayed Reward Handling</h4>
   <iframe src="images/delayed_reward.pdf" width="100%" height="600px" style="border:1px solid #ccc;"></iframe>
-  We tested Maze2D with episode length ranges from...
+
+  <p>
+    To evaluate the impact of sparse rewards, this subsection designs experiments involving delayed rewards. Specifically, the Maze2D environment assesses the agent’s capability of trajectory stitching to find the shortest path [D4RL, QDT]. We utilize the same dataset as described previously but replace the dense-reward mechanism with a delayed-reward scheme [Delayed Reward, Vitamin1]. Under this setup, rewards accumulate continuously over a fixed number of steps but are delivered collectively only at the end of each period, with zero rewards provided at intermediate steps. This setup significantly increases reward sparsity and task difficulty, severely limiting the agent's available learning signals.
+  </p>
+
   <h4 class="mt-5">Study: Extended Online Budget</h4>
   <iframe src="images/extend_online_budget.pdf" width="100%" height="600px" style="border:1px solid #ccc;"></iframe>
 
